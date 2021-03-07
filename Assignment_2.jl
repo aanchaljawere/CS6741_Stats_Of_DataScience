@@ -290,9 +290,12 @@ df4_fin = combine(gdf4, :Dailyconfirmed => sum, :Dailydeceased => sum, :Dailyrec
 # ╔═╡ 35037650-7e68-11eb-10bd-a73eac19248f
 df5 = df4
 
+# ╔═╡ c3d4d5e0-7f0d-11eb-0d87-a3532449fac2
+n = nrow(df5)
+
 # ╔═╡ 34d9a730-7e68-11eb-125b-27786c0d9fc0
 begin
-	insertcols!(df5,1,:moving_avg_confirmed=>[0.0 for _ in 1:401 ],:moving_avg_deceased=>[0.0 for _ in 1:401],:moving_avg_recovered=>[0.0 for _ in 1:401],makeunique=true)
+	insertcols!(df5,1,:moving_avg_confirmed=>[0.0 for _ in 1:n ],:moving_avg_deceased=>[0.0 for _ in 1:n],:moving_avg_recovered=>[0.0 for _ in 1:n],makeunique=true)
 end
 
 # ╔═╡ 34ac2e90-7e68-11eb-3627-efcbe91803f6
@@ -302,7 +305,7 @@ begin
 		df5.moving_avg_deceased[i] = 0
 		df5.moving_avg_recovered[i] = 0
 	end
-	for i in 7:401
+	for i in 7:n
 		sum1 = df5.Dailyconfirmed[i]
 		sum2 = df5.Dailydeceased[i]
 		sum3 = df5.Dailyrecovered[i]
@@ -416,6 +419,7 @@ end
 # ╠═f37aba90-7e67-11eb-26d8-a3775c09f59d
 # ╠═35397a72-7e68-11eb-0559-4d3df1d4f21e
 # ╠═35037650-7e68-11eb-10bd-a73eac19248f
+# ╠═c3d4d5e0-7f0d-11eb-0d87-a3532449fac2
 # ╠═34d9a730-7e68-11eb-125b-27786c0d9fc0
 # ╠═34ac2e90-7e68-11eb-3627-efcbe91803f6
 # ╠═347985d0-7e68-11eb-0e72-9520d9557a9d
