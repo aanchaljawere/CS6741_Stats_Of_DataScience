@@ -141,27 +141,32 @@ md"
 # ╔═╡ bb5bb873-b91f-451b-b4eb-be50f7b46935
 md"* Center Limit Theorem "
 
-# ╔═╡ 66f850cb-3c82-456f-9e7e-3865c6b2f947
+# ╔═╡ 5199f90c-9810-437a-bad3-4e39ff0332c5
 begin
-	plot(0:0.1:50,[pdf(D_n,k) for k in 0:0.1:50], label="Normal Distribution")
-	plot!(25:0.1:50,[pdf(D_n,k) for k in 25:0.1:50], fill=(0,:orange),label="Area of Normal Distribution")
-	plot!([25,25],[0,pdf(D_n,25)], label="Boundary region", line=(1,:dash, :green))
+	slider = @bind q_2 html"<input type=range min=0.5 max=1 step=0.01>"
 end
 
-# ╔═╡ 4502622f-2ade-4447-a9bb-a331fb42ec7d
-Z2 = (25.0-E_x)/sd_x
+# ╔═╡ f721303b-5830-4b17-a6c8-70d2d7d766a4
+q_2
 
-# ╔═╡ 065368b0-b44a-4326-a830-ab1a0b70c86c
-ans2 = quadgk(x -> pdf(Normal(0,1), x), (Z2-0.14,4)...)[1]
+# ╔═╡ 33e95174-268c-46a9-bbc5-aab57257371f
+begin
+	D_clt=Normal(50*q_2,sqrt(50)*sqrt(q_2*(1-q_2)))
+	prob = 1-quadgk(u2->pdf(D_clt,u2),(-Inf,29.5)...)[1]
+end
 
 # ╔═╡ b26d6147-aaef-4881-9b65-eaf240049019
 md"* Binomial Distribution"
 
-# ╔═╡ 81eb6184-cc57-4d64-94bc-34a65ccd1c0e
+# ╔═╡ 2e16c0d7-d6d7-4733-936d-9260d2949b4a
 begin
-	p_ = Int(50*(50/100)) #as given 50% chance of going ahead
-	k_ = p_ - 1
-	ans_bin2 = binomial_(k_)
+    q2__=0.59
+	k2__ = 29
+	sum_b2 = 0
+	for i in 0:k2__
+		sum_b2 += big(binomial(50,i)*(q2__)^i*((1-q2__)^(50-i)))
+	end
+	bin_ans2 = 1 - sum_b2
 end
 
 # ╔═╡ 0f8a8a75-57ba-424f-b1fa-4acd3e6e84e7
@@ -169,8 +174,27 @@ md"* Monte Carlo Approach"
 
 # ╔═╡ 9891bf4d-eabc-4080-b36b-7d732386d1cb
 begin
-	p2_ = 50/100 #as given 50% chance of going ahead
-	ans_monte_carlo2 = monte_carlo(p2_)
+	q_2_=0.59
+	ns = 1000000
+	smps =[]
+	for _ in 1:ns
+		current = []
+		for _ in 1:50
+			if (rand()<=q_2_)
+				push!(current,1)
+			else
+				push!(current,0)
+			end
+		end
+		push!(smps,current)
+	end
+	pass = 0
+	for sample in smps
+		if (count(i->(i> 0),sample)>=30)
+		pass += 1
+		end
+	end
+	pass/ns
 end
 
 # ╔═╡ 5e2e3734-42f9-4d3c-b452-c3d4538f7414
@@ -281,6 +305,9 @@ end
 # ╔═╡ b925adad-a117-4b53-abf8-90b1309f853f
 quadgk(x -> pdf(C, x), (5*99/σ2_2,+Inf)...)[1]
 
+# ╔═╡ bd426d76-1753-48ee-b340-57edf9464379
+# as for σ2_2 = 4.21, the value of the above integration is < 0.1, so our answer will be:
+
 # ╔═╡ c0a34782-6e31-422f-b55e-4b062f9aac9b
 σ2_1 = σ2_2/100
 
@@ -306,11 +333,11 @@ quadgk(x -> pdf(C, x), (5*99/σ2_2,+Inf)...)[1]
 # ╠═6d4498c5-befa-4999-8414-ec9eb9f0030b
 # ╟─e558ba92-3545-46f6-b97f-babda98425de
 # ╟─bb5bb873-b91f-451b-b4eb-be50f7b46935
-# ╠═66f850cb-3c82-456f-9e7e-3865c6b2f947
-# ╠═4502622f-2ade-4447-a9bb-a331fb42ec7d
-# ╠═065368b0-b44a-4326-a830-ab1a0b70c86c
+# ╠═5199f90c-9810-437a-bad3-4e39ff0332c5
+# ╠═f721303b-5830-4b17-a6c8-70d2d7d766a4
+# ╠═33e95174-268c-46a9-bbc5-aab57257371f
 # ╟─b26d6147-aaef-4881-9b65-eaf240049019
-# ╠═81eb6184-cc57-4d64-94bc-34a65ccd1c0e
+# ╠═2e16c0d7-d6d7-4733-936d-9260d2949b4a
 # ╟─0f8a8a75-57ba-424f-b1fa-4acd3e6e84e7
 # ╠═9891bf4d-eabc-4080-b36b-7d732386d1cb
 # ╟─5e2e3734-42f9-4d3c-b452-c3d4538f7414
@@ -328,4 +355,5 @@ quadgk(x -> pdf(C, x), (5*99/σ2_2,+Inf)...)[1]
 # ╠═f0c52588-20a5-423f-9278-55bbfe52b791
 # ╠═c6d7d2f2-f885-4f76-ab15-44e2c74bdcf3
 # ╠═b925adad-a117-4b53-abf8-90b1309f853f
+# ╠═bd426d76-1753-48ee-b340-57edf9464379
 # ╠═c0a34782-6e31-422f-b55e-4b062f9aac9b
